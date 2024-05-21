@@ -4,7 +4,7 @@
 Fazer o setup e interagir com o turtlebot, compreendendo os conceitos básico para uso do ROS em rede e dos pacotes para interação com o robô.
 
 ## Vídeo da Atividade
-Para visualizar na prática, assista esse [vídeo]()
+Para visualizar na prática, assista esse [vídeo](https://drive.google.com/file/d/1qD20QUx15eqya6C6CM4t5gCD17siyc_o/view?usp=sharing)
 
 ## Instruções para Execução
 
