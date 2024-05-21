@@ -4,12 +4,13 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import sys, select, tty, termios
+import os
 
-# Configurações de velocidade
-MAX_LIN_VEL = 0.22  # Velocidade máxima linear
-MAX_ANG_VEL = 2.84  # Velocidade máxima angular
-LIN_VEL_STEP_SIZE = 0.1  # Passo de incremento para velocidade linear
-ANG_VEL_STEP_SIZE = 0.1  # Passo de incremento para velocidade angular
+# Configurando velocidade
+MAX_LIN_VEL = 0.22
+MAX_ANG_VEL = 2.80
+LIN_VEL_STEP_SIZE = 0.1
+ANG_VEL_STEP_SIZE = 0.1
 
 class TeleopNode(Node):
     def __init__(self):
@@ -18,8 +19,7 @@ class TeleopNode(Node):
         self.settings = termios.tcgetattr(sys.stdin)
         self.current_linear_vel = 0.0
         self.current_angular_vel = 0.0
-
-        self.get_logger().info(
+        self.get_logger().info( # Mensagem no terminal
             """
             Control Your Robot!
             ---------------------------
@@ -28,57 +28,57 @@ class TeleopNode(Node):
             ←       →
                 ↓
             
-            ↑ : move forward
-            ↓ : move backward
-            ← : turn left
-            → : turn right
-            Space key : zero the robot
-            Enter key : shut down the system
+            Press space to zero velocities.
+            Press Enter to stop and exit.
             """
         )
-        
-        self.timer = self.create_timer(0.1, self.update)
+
+        self.timer = self.create_timer(0.1, self.update) # Atualização periódica
 
     def update(self):
-        key = self.getKey()
+        key = self.getKey() 
         if key:
-            self.process_key(key)
+            self.processKey(key)
 
-    def getKey(self):
-        tty.setraw(sys.stdin.fileno())
-        rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+    def getKey(self): 
+        tty.setraw(sys.stdin.fileno()) # Leitura de tecla por tecla
+        rlist, _, _ = select.select([sys.stdin], [], [], 0.1) # Lê tecla pressionada
         if rlist:
             key = sys.stdin.read(1)
-            if key == '\x1b':
-                additional_chars = sys.stdin.read(2)
+            print(f"Key pressed: {key} ({ord(key)})")  
+            if key == '\x1b':  
+                additional_chars = sys.stdin.read(2)  
                 return key + additional_chars
             return key
         return ''
 
-    def process_key(self, key):
-        if key == '\x1b[A':  # Up arrow
-            self.current_linear_vel = min(MAX_LIN_VEL, self.current_linear_vel + LIN_VEL_STEP_SIZE)
-        elif key == '\x1b[B':  # Down arrow
-            self.current_linear_vel = max(-MAX_LIN_VEL, self.current_linear_vel - LIN_VEL_STEP_SIZE)
-        elif key == '\x1b[D':  # Left arrow
-            self.current_angular_vel = min(MAX_ANG_VEL, self.current_angular_vel + ANG_VEL_STEP_SIZE)
-        elif key == '\x1b[C':  # Right arrow
-            self.current_angular_vel = max(-MAX_ANG_VEL, self.current_angular_vel - ANG_VEL_STEP_SIZE)
-        elif key == ' ':  # Space key
+    def processKey(self, key): # Processa as teclas
+        if key == '\x1b[A':  # Seta para cima
+            self.current_linear_vel = min(self.current_linear_vel + LIN_VEL_STEP_SIZE, MAX_LIN_VEL)
+        elif key == '\x1b[B':  # Seta para baixo
+            self.current_linear_vel = max(self.current_linear_vel - LIN_VEL_STEP_SIZE, -MAX_LIN_VEL)
+        elif key == '\x1b[D':  # Seta para esquerda
+            self.current_angular_vel = min(self.current_angular_vel + ANG_VEL_STEP_SIZE, MAX_ANG_VEL)
+            self.current_linear_vel = 0.0  # Zera a velocidade linear
+        elif key == '\x1b[C':  # Seta para direita
+            self.current_angular_vel = max(self.current_angular_vel - ANG_VEL_STEP_SIZE, -MAX_ANG_VEL)
+            self.current_linear_vel = 0.0 # Zera a velocidade linear
+        elif key == ' ':  # Tecla espaço
             self.current_linear_vel = 0.0
             self.current_angular_vel = 0.0
             self.get_logger().info("Velocities zeroed.")
-        elif key == '\n':  # Enter key
+        elif key == '\n' :  # Tecla Enter
+            print("Enter key detected, exiting...")
             self.get_logger().info("Enter key pressed - shutting down.")
             rclpy.shutdown()
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
-            sys.exit()
+            os._exit(0)
         else:
             self.get_logger().info(f"Unrecognized key pressed: {key}")
 
-        self.publish_twist()
+        self.publishTwist()
 
-    def publish_twist(self):
+    def publishTwist(self): # Mostra velocidade 
         twist = Twist()
         twist.linear.x = self.current_linear_vel
         twist.angular.z = self.current_angular_vel
