@@ -71,12 +71,12 @@ class TeleopNode(Node):
             self.current_linear_vel = 0.0
             self.current_angular_vel = 0.0
             self.get_logger().info("Velocities zeroed.")
-        elif key == '\n' :  # Tecla Enter
+        elif key == '\r' :  # Tecla Enter
             print("Enter key detected, exiting...")
             self.get_logger().info("Enter key pressed - shutting down.")
             rclpy.shutdown()
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
-            os._exit(0)
+            os._exit(0)  # Encerra o programa 
         else:
             self.get_logger().info(f"Unrecognized key pressed: {key}")
 
