@@ -56,17 +56,17 @@ Tecla 'Espaço' : zera as velocidades
 Tecla 'Enter' : encerra o programa
 
 ## Funções 
-**__init__**: responsável por iniciar o ROS, configuras as velocidades iniciais e armazenar as configurações do terminal.
+**'__init__'**: responsável por iniciar o ROS, configuras as velocidades iniciais e armazenar as configurações do terminal.
 
-**update**: verifica se alguma tecla está sendo pressionada, se estiver, processa usando a função 'processKey'
+**'update'**: verifica se alguma tecla está sendo pressionada, se estiver, processa usando a função 'processKey'
 
-**getKey**: lê a tecla do terminal e retorna essa tecla para ser processada.
+**'getKey'**: lê a tecla do terminal e retorna essa tecla para ser processada.
 
-**processKey**: ajusta as velocidades com base na tecla pressionada e chama a função 'publishTwist'.
+**'processKey'**: ajusta as velocidades com base na tecla pressionada e chama a função 'publishTwist'.
 
-**publishTwist**: atualiza a velocidade do Turtlebot.
+**'publishTwist'**: atualiza a velocidade do Turtlebot.
 
-**main**: inicia o nó (ROS) rodando até que seja encerrado pelo comando ou interrupção.
+**'main'**: inicia o nó (ROS) rodando até que seja encerrado pelo comando ou interrupção.
 
 
 
