@@ -28,8 +28,12 @@ class TeleopNode(Node):
             ←       →
                 ↓
             
-            Press space to zero velocities.
-            Press Enter to stop and exit.
+            ↑ : Mover para frente
+            ↓ : Mover para trás
+            ← : Mover para esquerda
+            → : Mover para direita
+            Tecla 'Espaço' : zera as velocidades
+            Tecla 'Enter' : encerra o programa
             """
         )
 
